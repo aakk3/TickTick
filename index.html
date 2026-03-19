@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grandparents To‑Do</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    margin: 0;
+    padding: 0;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+  }
+
+  .user-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .user-buttons button {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  .user-grandma { background: #ffb6c1; }
+  .user-grandpa { background: #add8e6; }
+
+  .remember-row {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tab-bar {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .tab-bar button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+
+  .todo-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .todo-input-row input, .todo-input-row select {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+
+  .todo-input-row button {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    background: #4caf50;
+    color: white;
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 14px;
+  }
+
+  li {
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border-left: 8px solid transparent;
+  }
+
+  .priority-high { border-left-color: #ff4d4d; }
+  .priority-medium { border-left-color: #ffcc00; }
+  .priority-low { border-left-color: #4caf50; }
+
+  .dot {
+    font-size: 1.4rem;
+    margin-right: 6px;
+  }
+
+  .expired {
+    color: red;
+    font-weight: bold;
+  }
+
+  .missed-box {
+    background: #ffe6e6;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 20px;
+  }
+
+  .logout-btn {
+    background: #ff9800;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: white;
+    float: right;
+  }
+
+  /* Password popup */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .popup {
+    background: #fff;
+    padding: 20px;
+    border-radius: 14px;
+    max-width: 320px;
+    width: 90%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .popup h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  .popup input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+  }
+
+  .popup-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .popup-buttons button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-ok { background: #4caf50; color: #fff; }
+  .btn-cancel { background: #ccc; }
+  .error-msg {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 6px;
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<h1>Grandparents To‑Do ❤️</h1>
+
+<!-- LOGIN -->
+<div id="loginSection">
+  <p>Select who is using the app:</p>
+
+  <div class="user-buttons">
+    <button class="user-grandma" onclick="startLogin('grandma')">Grandma 👵</button>
+    <button class="user-grandpa" onclick="startLogin('grandpa')">Grandpa 👴</button>
+  </div>
+
+  <div class="remember-row">
+    <input type="checkbox" id="rememberMe">
+    <label>Remember me</label>
+  </div>
+</div>
+
+<!-- TODO SECTION -->
+<div id="todoSection" style="display:none;">
+
+  <button class="logout-btn" onclick="logout()">Log out</button>
+  <h2 id="userTitle"></h2>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button onclick="showTab('tasks')">Tasks</button>
+    <button onclick="showTab('missed')">Missed</button>
+    <button onclick="showTab('thanks')">Thank You ❤️</button>
+  </div>
+
+  <!-- TASKS TAB -->
+  <div id="tab_tasks">
+    <div class="todo-input-row">
+      <input type="text" id="todoInput" placeholder="New task...">
+      <input type="date" id="todoDate">
+      <select id="todoPriority">
+        <option value="high">🔴 High</option>
+        <option value="medium">🟡 Medium</option>
+        <option value="low">🟢 Low</option>
+      </select>
+      <button onclick="addTodo()">Add</button>
+    </div>
+
+    <h3>Active Tasks</h3>
+    <ul id="todoList"></ul>
+  </div>
+
+  <!-- MISSED TAB -->
+  <div id="tab_missed" style="display:none;">
+    <div class="missed-box">
+      <h3>Missed Tasks ❗</h3>
+      <ul id="missedList"></ul>
+    </div>
+  </div>
+
+  <!-- THANK YOU TAB -->
+  <div id="tab_thanks" style="display:none; padding: 10px;">
+    <h2 style="text-align:center;">A Letter for You ❤️</h2>
+    <p style="font-size:1.1rem; line-height:1.5;">
+      Dear Grandma and Grandpa,<br><br>
+      Thank you for everything you’ve done for me.  
+      Your kindness, your stories, your love, and your support  
+      mean more to me than I can ever say.<br><br>
+      I made this little app as a gift for you —  
+      something small to make your days easier  
+      and to remind you how much I care about you.<br><br>
+      With all my love,<br>
+      <strong>[Mansour]</strong>
+    </p>
+  </div>
+
+</div>
+
+<!-- PASSWORD POPUP -->
+<div id="passwordOverlay" class="overlay">
+  <div class="popup">
+    <h3 id="popupTitle">Enter password</h3>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <div class="error-msg" id="passwordError"></div>
+    <div class="popup-buttons">
+      <button class="btn-ok" onclick="confirmPassword()">OK</button>
+      <button class="btn-cancel" onclick="closePasswordPopup()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_PREFIX = "grandparents_todo_";
+  const REMEMBER_KEY = "remember_user";
+
+  const GRANDMA_PASSWORD = "maha123";
+  const GRANDPA_PASSWORD = "nabil123";
+
+  let currentUser = null;
+  let todos = [];
+  let pendingUser = null;
+
+  function saveTodos() {
+    localStorage.setItem(STORAGE_PREFIX + currentUser, JSON.stringify(todos));
+  }
+
+  function loadTodos() {
+    const data = localStorage.getItem(STORAGE_PREFIX + currentUser);
+    todos = data ? JSON.parse(data) : [];
+    renderTodos();
+  }
+
+  function addTodo() {
+    const text = document.getElementById("todoInput").value.trim();
+    const date = document.getElementById("todoDate").value;
+    const priority = document.getElementById("todoPriority").value;
+
+    if (!text || !date) return;
+
+    todos.push({
+      text,
+      date,
+      priority,
+      done: false
+    });
+
+    saveTodos();
+    renderTodos();
+
+    document.getElementById("todoInput").value = "";
+    document.getElementById("todoDate").value = "";
+  }
+
+  function renderTodos() {
+    const now = new Date().toISOString().split("T")[0];
+
+    const activeList = document.getElementById("todoList");
+    const missedList = document.getElementById("missedList");
+
+    activeList.innerHTML = "";
+    missedList.innerHTML = "";
+
+    const priorityOrder = { high: 1, medium: 2, low: 3 };
+    todos.sort((a, b) => {
+      const pDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+      if (pDiff !== 0) return pDiff;
+      return a.date.localeCompare(b.date);
+    });
+
+    todos.forEach((task, index) => {
+      const li = document.createElement("li");
+      li.classList.add(`priority-${task.priority}`);
+
+      const dot = {
+        high: "🔴",
+        medium: "🟡",
+        low: "🟢"
+      }[task.priority];
+
+      const text = document.createElement("span");
+      text.innerHTML = `<span class="dot">${dot}</span> ${task.text} (Due: ${task.date})`;
+
+      const btn = document.createElement("button");
+      btn.textContent = "Delete";
+      btn.style.background = "#f44336";
+      btn.style.color = "white";
+      btn.style.border = "none";
+      btn.style.padding = "6px 10px";
+      btn.style.borderRadius = "8px";
+      btn.onclick = () => deleteTask(index);
+
+      li.appendChild(text);
+      li.appendChild(btn);
+
+      if (task.date < now) {
+        text.classList.add("expired");
+        missedList.appendChild(li);
+      } else {
+        activeList.appendChild(li);
+      }
+    });
+  }
+
+  function deleteTask(i) {
+    todos.splice(i, 1);
+    saveTodos();
+    renderTodos();
+  }
+
+  function startLogin(user) {
+    const remembered = localStorage.getItem(REMEMBER_KEY);
+    if (remembered === user) {
+      doLogin(user);
+      return;
+    }
+    pendingUser = user;
+    openPasswordPopup(user);
+  }
+
+  function doLogin(user) {
+    currentUser = user;
+
+    if (document.getElementById("rememberMe").checked) {
+      localStorage.setItem(REMEMBER_KEY, user);
+    }
+
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("todoSection").style.display = "block";
+
+    document.getElementById("userTitle").textContent =
+      user === "grandma" ? "Grandma’s To‑Do List 💐" : "Grandpa’s To‑Do List 🌟";
+
+    showTab("tasks");
+    loadTodos();
+  }
+
+  function logout() {
+    currentUser = null;
+    document.getElementById("todoSection").style.display = "none";
+    document.getElementById("loginSection").style.display = "block";
+  }
+
+  function showTab(tab) {
+    document.getElementById("tab_tasks").style.display = "none";
+    document.getElementById("tab_missed").style.display = "none";
+    document.getElementById("tab_thanks").style.display = "none";
+
+    if (tab === "tasks") document.getElementById("tab_tasks").style.display = "block";
+    if (tab === "missed") document.getElementById("tab_missed").style.display = "block";
+    if (tab === "thanks") document.getElementById("tab_thanks").style.display = "block";
+  }
+
+  function openPasswordPopup(user) {
+    const overlay = document.getElementById("passwordOverlay");
+    const title = document.getElementById("popupTitle");
+    const input = document.getElementById("passwordInput");
+    const error = document.getElementById("passwordError");
+
+    title.textContent = user === "grandma"
+      ? "Password for Grandma"
+      : "Password for Grandpa";
+
+    input.value = "";
+    error.textContent = "";
+    overlay.style.display = "flex";
+    input.focus();
+  }
+
+  function closePasswordPopup() {
+    document.getElementById("passwordOverlay").style.display = "none";
+    pendingUser = null;
+  }
+
+  function confirmPassword() {
+    const input = document.getElementById("passwordInput").value;
+    const error = document.getElementById("passwordError");
+
+    if (!pendingUser) return;
+
+    const correct =
+      pendingUser === "grandma" ? GRANDMA_PASSWORD : GRANDPA_PASSWORD;
+
+    if (input === correct) {
+      document.getElementById("passwordOverlay").style.display = "none";
+      const userToLogin = pendingUser;
+      pendingUser = null;
+      doLogin(userToLogin);
+    } else {
+      error.textContent = "Incorrect password. Please try again.";
+    }
+  }
+
+  // Auto-login if remembered
+  window.onload = () => {
+    const remembered = localStorage.getItem(REMEMBER_KEY);
+    if (remembered === "grandma" || remembered === "grandpa") {
+      doLogin(remembered);
+    }
+  };
+</script>
+
+</div>
+</body>
+</html>
