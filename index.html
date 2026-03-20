@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <title>Grandparents To‑Do</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     /* ============================================================
-       ROOT VARIABLES (THEMES + FONT SIZES)
+       DESIGN SYSTEM: COLORS, TYPOGRAPHY, SCALES
        ============================================================ */
     :root {
       --bg: #f3f4f7;
@@ -19,116 +20,395 @@
       --high: #ff4d4d;
       --medium: #ffcc00;
       --low: #4caf50;
-      --font-size: 16px;
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.1);
     }
 
-    /* THEMES */
-    .theme-pink { --accent: #ff7b9c; --accent-soft: #ffe3ec; --bg: #fff4f7; }
-    .theme-blue { --accent: #4f9dff; --accent-soft: #dbeaff; --bg: #eef6ff; }
-    .theme-green { --accent: #4caf50; --accent-soft: #e6f7e6; --bg: #f3fff3; }
-    .theme-dark { 
-      --bg: #1a1a1a; --card-bg: #2d2d2d; --text-main: #eee; 
-      --text-soft: #bbb; --border-soft: #444; --accent: #bb86fc; 
+    /* THEMES (override base tokens) */
+    .theme-pink {
+      --accent: #ff7b9c;
+      --accent-soft: #ffe3ec;
+      --bg: #fff4f7;
+      --card-bg: #ffffff;
+      --text-main: #222;
+      --text-soft: #666;
+      --border-soft: #e0e3ea;
     }
 
-    /* FONT SIZES */
+    .theme-blue {
+      --accent: #4f9dff;
+      --accent-soft: #dbeaff;
+      --bg: #eef6ff;
+      --card-bg: #ffffff;
+      --text-main: #222;
+      --text-soft: #555;
+      --border-soft: #d0d7e5;
+    }
+
+    .theme-green {
+      --accent: #4caf50;
+      --accent-soft: #e6f7e6;
+      --bg: #f3fff3;
+      --card-bg: #ffffff;
+      --text-main: #222;
+      --text-soft: #555;
+      --border-soft: #d0e5d0;
+    }
+
+    .theme-dark {
+      --bg: #1a1a1a;
+      --card-bg: #2d2d2d;
+      --text-main: #eeeeee;
+      --text-soft: #bbbbbb;
+      --border-soft: #444444;
+      --accent: #bb86fc;
+      --accent-soft: #3b2b4f;
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    /* FONT SIZE MODES (applied at body level) */
     .font-small { font-size: 14px; }
     .font-medium { font-size: 18px; }
     .font-large { font-size: 22px; }
 
-    /* BASIC STYLING */
+    /* ============================================================
+       GLOBAL LAYOUT
+       ============================================================ */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
-      transition: all 0.3s ease;
+      transition: background-color 0.25s ease, color 0.25s ease;
       display: flex;
       justify-content: center;
       padding: 20px;
     }
 
-    .app { width: 100%; max-width: 600px; }
-    .card {
-      background: var(--card-bg);
-      padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    .app {
+      width: 100%;
+      max-width: 600px;
     }
 
-    header { text-align: center; margin-bottom: 20px; }
+    .card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+    }
+
     .pill {
       display: inline-block;
       background: var(--accent-soft);
       color: var(--accent);
-      padding: 5px 15px;
-      border-radius: 50px;
-      font-weight: bold;
-      font-size: 0.8em;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.8rem;
     }
 
-    /* LOGIN */
-    .user-buttons { display: flex; gap: 10px; margin: 20px 0; }
-    button {
-      flex: 1;
-      padding: 15px;
-      border: none;
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    /* ============================================================
+       LOGIN
+       ============================================================ */
+    .user-buttons {
+      display: flex;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 16px;
       border-radius: 12px;
+      border: none;
       cursor: pointer;
-      font-size: 1em;
-      font-weight: bold;
+      font-size: 1rem;
+      font-weight: 600;
       background: var(--accent);
-      color: white;
-      transition: opacity 0.2s;
+      color: #ffffff;
+      transition: opacity 0.2s ease, transform 0.05s ease;
     }
-    button:hover { opacity: 0.9; }
-    .remember-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
 
-    /* TABS */
-    .tab-bar { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; overflow-x: auto;}
-    .tab-bar button { background: none; color: var(--text-soft); flex: none; padding: 10px; border-radius: 0; }
-    .tab-bar button.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
-    .logout-btn { margin-left: auto; color: #ff4d4d; cursor: pointer; padding: 10px; font-weight: bold;}
+    .btn:active {
+      transform: scale(0.98);
+    }
 
-    /* TODO LIST */
-    .todo-input-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    input, select, textarea {
-      padding: 12px;
+    .btn--secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn--danger {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--text-soft);
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+
+    .remember-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============================================================
+       TABS
+       ============================================================ */
+    .tab-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border-soft);
+      padding-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .tab-bar__button {
+      background: none;
+      border: none;
+      padding: 8px 10px;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .tab-bar__button--active {
+      color: var(--accent);
+      border-bottom: 3px solid var(--accent);
+    }
+
+    .tab-bar__spacer {
+      flex: 1;
+    }
+
+    .tab-bar__icon {
+      cursor: pointer;
+      padding: 8px;
+      font-size: 1.1rem;
+    }
+
+    .logout-btn {
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #b91c1c;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      white-space: nowrap;
+    }
+
+    .lang-toggle-btn {
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1f2933;
+      background: #e5e7eb;
+      border: 1px solid #d1d5db;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    /* ============================================================
+       TASK INPUT + LIST
+       ============================================================ */
+    .todo-input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      padding: 10px 12px;
       border: 2px solid var(--border-soft);
       border-radius: 8px;
       background: var(--card-bg);
       color: var(--text-main);
-      font-size: 1em;
+      font-size: 1rem;
+      width: 100%;
     }
-    ul { list-style: none; padding: 0; }
-    li {
+
+    input[type="text"]::placeholder {
+      color: #9ca3af;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .task-item {
       background: var(--bg);
       margin-bottom: 10px;
-      padding: 15px;
+      padding: 12px 14px;
       border-radius: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-left: 6px solid var(--accent);
+      gap: 10px;
     }
+
+    .task-item__main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-item__title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .task-item__meta {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .task-item__meta--expired {
+      color: var(--high);
+      font-weight: 600;
+    }
+
+    .task-item__actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .task-item--completed {
+      opacity: 0.6;
+    }
+
     .priority-high { border-left-color: var(--high); }
     .priority-medium { border-left-color: var(--medium); }
     .priority-low { border-left-color: var(--low); }
-    
-    .expired { color: var(--high); font-weight: bold; }
-    .btn-small { padding: 5px 10px; font-size: 0.8em; margin-left: 5px; width: auto; flex: none;}
-    .btn-delete { background: #ff4d4d; }
-    .btn-check { background: var(--low); }
 
-    /* OVERLAY */
+    /* ============================================================
+       OVERLAY (PASSWORD)
+       ============================================================ */
     .overlay {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
     }
-    .popup { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; width: 80%; max-width: 300px;}
-    .error-msg { color: var(--high); font-size: 0.9em; margin: 10px 0; }
-    
-    .footer { text-align: center; margin-top: 20px; font-size: 0.8em; color: var(--text-soft); }
+
+    .overlay--visible {
+      display: flex;
+    }
+
+    .popup {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 16px;
+      text-align: center;
+      width: 90%;
+      max-width: 320px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .popup h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .error-msg {
+      color: var(--high);
+      font-size: 0.85rem;
+      margin: 8px 0;
+      min-height: 1em;
+    }
+
+    /* ============================================================
+       MISC
+       ============================================================ */
+    .section-subtext {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .settings-group {
+      margin-bottom: 16px;
+    }
+
+    .settings-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       RTL SUPPORT
+       ============================================================ */
+    .rtl {
+      direction: rtl;
+      text-align: right;
+    }
+
+    .rtl .tab-bar {
+      flex-direction: row-reverse;
+    }
+
+    .rtl .tab-bar__spacer {
+      order: -1;
+    }
+
+    .rtl .task-item {
+      flex-direction: row-reverse;
+    }
+
+    .rtl .task-item__actions {
+      flex-direction: column-reverse;
+    }
   </style>
 </head>
 
@@ -138,252 +418,662 @@
 
     <header>
       <h1 id="mainTitle">Grandparents To‑Do</h1>
-      <div class="pill">Made by Mansour for Grandma & Grandpa 💖</div>
+      <div class="pill" id="madeByPill">Made by Mansour for Tata &amp; Seedo 💖</div>
     </header>
-
     <!-- LOGIN -->
-    <div id="loginSection">
-      <p>Select who is using the app:</p>
+    <section id="loginSection" aria-label="Login">
+      <p id="loginPrompt">Select who is using the app:</p>
       <div class="user-buttons">
-        <button onclick="startLogin('grandma')">👵 Grandma</button>
-        <button onclick="startLogin('grandpa')">👴 Grandpa</button>
+        <button class="btn" data-user="tata" id="loginTataBtn">👵 Tata</button>
+        <button class="btn" data-user="seedo" id="loginSeedoBtn">👴 Seedo</button>
       </div>
       <div class="remember-row">
         <input type="checkbox" id="rememberMe">
-        <label for="rememberMe">Remember me</label>
+        <label for="rememberMe" id="rememberLabel">Remember me on this device</label>
       </div>
-    </div>
+    </section>
 
     <!-- MAIN APP -->
-    <div id="todoSection" style="display:none;">
+    <section id="todoSection" style="display:none;" aria-label="Task manager">
       <div class="tab-bar">
-        <button id="tabBtn_tasks" class="active" onclick="showTab('tasks')">Tasks</button>
-        <button id="tabBtn_missed" onclick="showTab('missed')">Missed</button>
-        <button id="tabBtn_thanks" onclick="showTab('thanks')">Thank You</button>
-        <div class="logout-btn" onclick="logoutUser()">Logout</div>
-        <div style="cursor:pointer; padding: 10px;" onclick="showTab('settings')">⚙️</div>
+        <button class="tab-bar__button tab-bar__button--active" data-tab="tasks" id="tabBtn_tasks">Tasks</button>
+        <button class="tab-bar__button" data-tab="missed" id="tabBtn_missed">Missed</button>
+        <button class="tab-bar__button" data-tab="thanks" id="tabBtn_thanks">Thank You</button>
+
+        <div class="tab-bar__spacer"></div>
+
+        <!-- Language Toggle -->
+        <button class="lang-toggle-btn" id="langToggleBtn">AR</button>
+
+        <!-- Logout -->
+        <button class="logout-btn" type="button" id="logoutBtn">Logout</button>
+
+        <!-- Settings Icon -->
+        <div class="tab-bar__icon" role="button" aria-label="Settings" id="settingsIcon">⚙️</div>
       </div>
 
       <!-- TASKS TAB -->
       <div id="tab_tasks">
         <div class="todo-input-row">
-          <input type="text" id="todoInput" placeholder="What needs to be done?">
+          <input type="text" id="todoInput" placeholder="What needs to be done?" autocomplete="off">
           <input type="date" id="todoDate">
           <select id="todoPriority">
-            <option value="high">🔴 High Priority</option>
-            <option value="medium" selected>🟡 Medium Priority</option>
-            <option value="low">🟢 Low Priority</option>
+            <option value="high">🔴 High priority</option>
+            <option value="medium" selected>🟡 Medium priority</option>
+            <option value="low">🟢 Low priority</option>
           </select>
-          <button onclick="addTodo()">Add Task</button>
+          <button class="btn" type="button" id="addTaskBtn">Add task</button>
         </div>
-        <h3>Active Tasks</h3>
+        <h3 id="activeTasksHeader">Active Tasks</h3>
         <ul id="todoList"></ul>
       </div>
 
       <!-- MISSED TAB -->
       <div id="tab_missed" style="display:none;">
-        <h3>Missed Tasks</h3>
-        <p style="font-size: 0.9em; color: var(--text-soft);">Tasks past their due date appear here.</p>
+        <h3 id="missedHeader">Missed Tasks</h3>
+        <p class="section-subtext" id="missedInfo">Tasks past their due date appear here.</p>
         <ul id="missedList"></ul>
       </div>
 
       <!-- THANK YOU TAB -->
       <div id="tab_thanks" style="display:none;">
-        <h3>A Letter for You ❤️</h3>
+        <h3 id="thanksHeader">A Letter for You ❤️</h3>
         <div id="thankYouText" style="line-height: 1.6; white-space: pre-wrap;">
-          Dear Grandma and Grandpa,
+Dear Tata and Seedo,
 
-          Thank you for everything you’ve done for me.
-          Your kindness, your stories, your love, and your support
-          mean more to me than I can ever say.
+Thank you for everything you’ve done for me.
+Your kindness, your stories, your love, and your support
+mean more to me than I can ever say.
 
-          With all my love,
-          Mansour
+With all my love,
+Mansour
         </div>
       </div>
 
       <!-- SETTINGS TAB -->
       <div id="tab_settings" style="display:none;">
-        <h3>Settings</h3>
-        <label>Theme:</label><br>
-        <select id="themeSelect" onchange="changeTheme()" style="width:100%; margin-bottom:15px;">
-          <option value="theme-pink">🌸 Soft Pink</option>
-          <option value="theme-blue">🔵 Soft Blue</option>
-          <option value="theme-green">🌿 Soft Green</option>
-          <option value="theme-dark">🌙 Soft Dark</option>
-        </select>
+        <h3 id="settingsHeader">Settings</h3>
 
-        <label>Font Size:</label><br>
-        <select id="fontSelect" onchange="changeFont()" style="width:100%; margin-bottom:15px;">
-          <option value="font-small">Small</option>
-          <option value="font-medium" selected>Medium</option>
-          <option value="font-large">Large</option>
-        </select>
+        <div class="settings-group">
+          <label for="languageSelect" id="languageLabel">Language</label>
+          <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
 
-        <label>Edit Thank‑You Letter:</label>
-        <textarea id="thankYouEditor" rows="5" style="width:100%; margin-bottom:15px;" onchange="updateThankYou()"></textarea>
+        <div class="settings-group">
+          <label for="themeSelect" id="themeLabel">Theme</label>
+          <select id="themeSelect">
+            <option value="theme-pink">🌸 Soft Pink</option>
+            <option value="theme-blue">🔵 Soft Blue</option>
+            <option value="theme-green">🌿 Soft Green</option>
+            <option value="theme-dark">🌙 Soft Dark</option>
+          </select>
+        </div>
 
-        <button onclick="clearAllTasks()" style="background:#666; margin-bottom:10px;">Clear All My Tasks</button>
-        <button onclick="resetApp()" style="background:#ff4d4d;">Reset App Entirely</button>
+        <div class="settings-group">
+          <label for="fontSelect" id="fontLabel">Font size</label>
+          <select id="fontSelect">
+            <option value="font-small">Small</option>
+            <option value="font-medium" selected>Medium</option>
+            <option value="font-large">Large</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label for="thankYouEditor" id="letterEditLabel">Edit thank‑you letter</label>
+          <textarea id="thankYouEditor" rows="5"></textarea>
+        </div>
+
+        <div class="settings-group">
+          <button class="btn btn--secondary" type="button" id="clearTasksBtn">Clear all my tasks</button>
+        </div>
+        <div class="settings-group">
+          <button class="btn btn--danger" type="button" id="resetAppBtn">Reset app entirely</button>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="footer">Made by Mansour for Grandma & Grandpa 💖</div>
+    <div class="footer" id="footerText">Made by Mansour for Tata &amp; Seedo 💖</div>
+  </div>
+</div>
+
+<!-- PASSWORD OVERLAY -->
+<div class="overlay" id="passwordOverlay" aria-modal="true" role="dialog">
+  <div class="popup">
+    <h3 id="popupTitle">Enter password</h3>
+    <input type="password" id="passwordInput" autocomplete="current-password">
+    <div class="error-msg" id="passwordError"></div>
+    <div style="display:flex; gap:8px; margin-top:10px; justify-content:center;">
+      <button class="btn" type="button" id="passwordOkBtn">OK</button>
+      <button class="btn btn--ghost" type="button" id="passwordCancelBtn">Cancel</button>
+    </div>
   </div>
 </div>
 
 <script>
-  let currentUser = "";
-  let tasks = JSON.parse(localStorage.getItem('mansourTasks')) || [];
+/* ============================================================
+   FULL MULTILINGUAL DICTIONARY (EN + AR)
+   ============================================================ */
+const i18n = {
+  en: {
+    titleTata: "Tata's List",
+    titleSeedo: "Seedo's List",
+    loginPrompt: "Select who is using the app:",
+    rememberMe: "Remember me on this device",
+    tasks: "Tasks",
+    missed: "Missed",
+    thanks: "Thank You",
+    settings: "Settings",
+    addTask: "Add task",
+    whatNeeds: "What needs to be done?",
+    activeTasks: "Active Tasks",
+    missedTasks: "Missed Tasks",
+    missedInfo: "Tasks past their due date appear here.",
+    logout: "Logout",
+    language: "Language",
+    theme: "Theme",
+    fontSize: "Font size",
+    editLetter: "Edit thank‑you letter",
+    clearTasks: "Clear all my tasks",
+    resetApp: "Reset app entirely",
+    enterPassword: "Enter password",
+    ok: "OK",
+    cancel: "Cancel",
+    due: "Due:",
+    noDate: "No date",
+    deleteConfirm: "Delete all your tasks?",
+    resetConfirm: "This will erase everything and start over. Are you sure?",
+    madeBy: "Made by Mansour for Tata & Seedo 💖",
+    letterDefault: `Dear Tata and Seedo,
 
-  // Check if "Remember Me" was used
-  window.onload = function() {
-    const savedUser = localStorage.getItem('mansourUser');
-    if (savedUser) {
-      startLogin(savedUser);
-    }
-    // Load saved settings
-    const theme = localStorage.getItem('mansourTheme') || 'theme-pink';
-    const font = localStorage.getItem('mansourFont') || 'font-medium';
-    document.body.className = `${theme} ${font}`;
-    document.getElementById('themeSelect').value = theme;
-    document.getElementById('fontSelect').value = font;
-    
-    const savedLetter = localStorage.getItem('mansourLetter');
-    if(savedLetter) {
-        document.getElementById('thankYouText').innerText = savedLetter;
-        document.getElementById('thankYouEditor').value = savedLetter;
-    }
-  };
+Thank you for everything you’ve done for me.
+Your kindness, your stories, your love, and your support
+mean more to me than I can ever say.
 
-  function startLogin(user) {
-    currentUser = user;
-    if (document.getElementById('rememberMe').checked) {
-      localStorage.setItem('mansourUser', user);
-    }
-    document.getElementById('loginSection').style.display = "none";
-    document.getElementById('todoSection').style.display = "block";
-    document.getElementById('mainTitle').innerText = (user === 'grandma' ? "Grandma's List" : "Grandpa's List");
+With all my love,
+Mansour`
+  },
+
+  ar: {
+    titleTata: "قائمة تاتا",
+    titleSeedo: "قائمة سيدو",
+    loginPrompt: "اختر من يستخدم التطبيق:",
+    rememberMe: "تذكرني على هذا الجهاز",
+    tasks: "المهام",
+    missed: "المهام المتأخرة",
+    thanks: "رسالة شكر",
+    settings: "الإعدادات",
+    addTask: "إضافة مهمة",
+    whatNeeds: "ما الذي يجب القيام به؟",
+    activeTasks: "المهام النشطة",
+    missedTasks: "المهام المتأخرة",
+    missedInfo: "تظهر هنا المهام التي تجاوزت تاريخها.",
+    logout: "تسجيل الخروج",
+    language: "اللغة",
+    theme: "السمة",
+    fontSize: "حجم الخط",
+    editLetter: "تعديل رسالة الشكر",
+    clearTasks: "حذف جميع مهامي",
+    resetApp: "إعادة ضبط التطبيق بالكامل",
+    enterPassword: "أدخل كلمة المرور",
+    ok: "موافق",
+    cancel: "إلغاء",
+    due: "تاريخ الاستحقاق:",
+    noDate: "بدون تاريخ",
+    deleteConfirm: "هل تريد حذف جميع مهامك؟",
+    resetConfirm: "سيتم حذف كل شيء والبدء من جديد. هل أنت متأكد؟",
+    madeBy: "صنعه منصور لتاتا وسيدو 💖",
+    letterDefault: `عزيزتي تاتا وعزيزي سيدو،
+
+شكرًا لكل ما قدمتموه لي.
+لطفكم، قصصكم، محبتكم، ودعمكم
+تعني لي أكثر مما أستطيع قوله.
+
+مع كل الحب،
+منصور`
+  }
+};
+
+/* ============================================================
+   STORAGE KEYS
+   ============================================================ */
+const STORAGE_KEYS = {
+  tasks: "mansourTasks",
+  user: "mansourUser",
+  theme: "mansourTheme",
+  font: "mansourFont",
+  letter: "mansourLetter",
+  lang: "mansourLang"
+};
+
+/* ============================================================
+   PASSWORDS (UNCHANGED)
+   ============================================================ */
+const PASSWORDS = {
+  tata: "maha123",
+  seedo: "nabil123"
+};
+
+/* ============================================================
+   APP STATE
+   ============================================================ */
+const AppState = {
+  currentUser: null,
+  currentLang: "en",
+  tasks: [],
+  pendingUserForLogin: null
+};
+
+/* ============================================================
+   STORAGE SERVICE
+   ============================================================ */
+const StorageService = {
+  safeParse(json, fallback) {
+    try { return json ? JSON.parse(json) : fallback; }
+    catch { return fallback; }
+  },
+
+  loadTasks() {
+    return this.safeParse(localStorage.getItem(STORAGE_KEYS.tasks), []);
+  },
+
+  saveTasks(tasks) {
+    localStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(tasks));
+  },
+
+  loadUser() {
+    return localStorage.getItem(STORAGE_KEYS.user);
+  },
+
+  saveUser(user) {
+    localStorage.setItem(STORAGE_KEYS.user, user);
+  },
+
+  clearUser() {
+    localStorage.removeItem(STORAGE_KEYS.user);
+  },
+
+  loadTheme() {
+    return localStorage.getItem(STORAGE_KEYS.theme);
+  },
+
+  saveTheme(theme) {
+    localStorage.setItem(STORAGE_KEYS.theme, theme);
+  },
+
+  loadFont() {
+    return localStorage.getItem(STORAGE_KEYS.font);
+  },
+
+  saveFont(font) {
+    localStorage.setItem(STORAGE_KEYS.font, font);
+  },
+
+  loadLetter() {
+    return localStorage.getItem(STORAGE_KEYS.letter);
+  },
+
+  saveLetter(text) {
+    localStorage.setItem(STORAGE_KEYS.letter, text);
+  },
+
+  loadLang() {
+    return localStorage.getItem(STORAGE_KEYS.lang);
+  },
+
+  saveLang(lang) {
+    localStorage.setItem(STORAGE_KEYS.lang, lang);
+  },
+
+  clearAll() {
+    localStorage.clear();
+  }
+};
+
+/* ============================================================
+   LANGUAGE APPLICATION
+   ============================================================ */
+function applyLanguage(lang) {
+  AppState.currentLang = lang;
+  StorageService.saveLang(lang);
+
+  const t = i18n[lang];
+
+  // RTL toggle
+  document.body.classList.toggle("rtl", lang === "ar");
+  document.documentElement.lang = lang;
+
+  // Update UI text
+  document.getElementById("loginPrompt").innerText = t.loginPrompt;
+  document.getElementById("rememberLabel").innerText = t.rememberMe;
+
+  document.getElementById("tabBtn_tasks").innerText = t.tasks;
+  document.getElementById("tabBtn_missed").innerText = t.missed;
+  document.getElementById("tabBtn_thanks").innerText = t.thanks;
+
+  document.getElementById("logoutBtn").innerText = t.logout;
+  document.getElementById("settingsHeader").innerText = t.settings;
+
+  document.getElementById("languageLabel").innerText = t.language;
+  document.getElementById("themeLabel").innerText = t.theme;
+  document.getElementById("fontLabel").innerText = t.fontSize;
+  document.getElementById("letterEditLabel").innerText = t.editLetter;
+
+  document.getElementById("addTaskBtn").innerText = t.addTask;
+  document.getElementById("todoInput").placeholder = t.whatNeeds;
+
+  document.getElementById("activeTasksHeader").innerText = t.activeTasks;
+  document.getElementById("missedHeader").innerText = t.missedTasks;
+  document.getElementById("missedInfo").innerText = t.missedInfo;
+
+  document.getElementById("clearTasksBtn").innerText = t.clearTasks;
+  document.getElementById("resetAppBtn").innerText = t.resetApp;
+
+  document.getElementById("popupTitle").innerText = t.enterPassword;
+  document.getElementById("passwordOkBtn").innerText = t.ok;
+  document.getElementById("passwordCancelBtn").innerText = t.cancel;
+
+  document.getElementById("footerText").innerText = t.madeBy;
+  document.getElementById("madeByPill").innerText = t.madeBy;
+
+  // Update main title if logged in
+  if (AppState.currentUser === "tata") {
+    document.getElementById("mainTitle").innerText = t.titleTata;
+  } else if (AppState.currentUser === "seedo") {
+    document.getElementById("mainTitle").innerText = t.titleSeedo;
+  }
+
+  // Update thank-you letter if no custom letter saved
+  const savedLetter = StorageService.loadLetter();
+  if (!savedLetter) {
+    document.getElementById("thankYouText").innerText = t.letterDefault;
+    document.getElementById("thankYouEditor").value = t.letterDefault;
+  }
+
+  // Update language selector
+  document.getElementById("languageSelect").value = lang;
+
+  // Update quick toggle button
+  document.getElementById("langToggleBtn").innerText = lang === "en" ? "AR" : "EN";
+
+  // Re-render tasks for correct labels
+  if (AppState.currentUser) {
     renderTasks();
   }
+}
 
-  function logoutUser() {
-    localStorage.removeItem('mansourUser');
-    location.reload();
-  }
+/* ============================================================
+   TASK RENDERING
+   ============================================================ */
+function renderTasks() {
+  const t = i18n[AppState.currentLang];
 
-  function showTab(tabName) {
-    const tabs = ['tasks', 'missed', 'thanks', 'settings'];
-    tabs.forEach(t => {
-      document.getElementById('tab_' + t).style.display = (t === tabName ? "block" : "none");
-      document.getElementById('tabBtn_' + (t === 'thanks' || t === 'settings' ? 'tasks' : t))?.classList.remove('active');
-    });
-    // Visual tab highlighting
-    document.querySelectorAll('.tab-bar button').forEach(btn => btn.classList.remove('active'));
-    if(tabName !== 'settings') document.getElementById('tabBtn_'+tabName)?.classList.add('active');
-  }
+  const list = document.getElementById("todoList");
+  const missedList = document.getElementById("missedList");
+  list.innerHTML = "";
+  missedList.innerHTML = "";
 
-  function addTodo() {
-    const input = document.getElementById('todoInput');
-    const date = document.getElementById('todoDate');
-    const priority = document.getElementById('todoPriority');
-    
-    if (input.value.trim() === "") return;
+  const today = new Date().toISOString().split("T")[0];
 
-    const newTask = {
-      id: Date.now(),
-      user: currentUser,
-      text: input.value,
-      date: date.value,
-      priority: priority.value,
-      completed: false
-    };
-
-    tasks.push(newTask);
-    saveAndRender();
-    input.value = "";
-  }
-
-  function toggleTask(id) {
-    tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t);
-    saveAndRender();
-  }
-
-  function deleteTask(id) {
-    tasks = tasks.filter(t => t.id !== id);
-    saveAndRender();
-  }
-
-  function saveAndRender() {
-    localStorage.setItem('mansourTasks', JSON.stringify(tasks));
-    renderTasks();
-  }
-
-  function renderTasks() {
-    const list = document.getElementById('todoList');
-    const missedList = document.getElementById('missedList');
-    list.innerHTML = "";
-    missedList.innerHTML = "";
-
-    const today = new Date().toISOString().split('T')[0];
-
-    tasks.filter(t => t.user === currentUser).forEach(task => {
+  AppState.tasks
+    .filter(task => task.user === AppState.currentUser)
+    .forEach(task => {
       const isMissed = task.date && task.date < today && !task.completed;
-      
-      const li = document.createElement('li');
-      li.className = `priority-${task.priority}`;
-      if(task.completed) li.style.opacity = "0.5";
 
-      li.innerHTML = `
-        <div>
-          <strong style="${task.completed ? 'text-decoration: line-through' : ''}">${task.text}</strong><br>
-          <small>${task.date || 'No date'}</small>
-        </div>
-        <div>
-          <button class="btn-small btn-check" onclick="toggleTask(${task.id})">${task.completed ? '↩️' : '✔️'}</button>
-          <button class="btn-small btn-delete" onclick="deleteTask(${task.id})">🗑️</button>
-        </div>
-      `;
+      const li = document.createElement("li");
+      li.className = `task-item priority-${task.priority}`;
+      if (task.completed) li.classList.add("task-item--completed");
 
-      if (isMissed) {
-        missedList.appendChild(li);
-      } else {
-        list.appendChild(li);
-      }
+      const main = document.createElement("div");
+      main.className = "task-item__main";
+
+      const title = document.createElement("div");
+      title.className = "task-item__title";
+      title.textContent = task.text;
+      if (task.completed) title.style.textDecoration = "line-through";
+
+      const meta = document.createElement("div");
+      meta.className = "task-item__meta";
+      meta.textContent = `${t.due} ${task.date || t.noDate}`;
+      if (isMissed) meta.classList.add("task-item__meta--expired");
+
+      main.appendChild(title);
+      main.appendChild(meta);
+
+      const actions = document.createElement("div");
+      actions.className = "task-item__actions";
+
+      const toggleBtn = document.createElement("button");
+      toggleBtn.className = "btn btn--secondary";
+      toggleBtn.style.fontSize = "0.8rem";
+      toggleBtn.textContent = task.completed ? "↩️" : "✔️";
+      toggleBtn.onclick = () => toggleTask(task.id);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn btn--danger";
+      deleteBtn.style.fontSize = "0.8rem";
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.onclick = () => deleteTask(task.id);
+
+      actions.appendChild(toggleBtn);
+      actions.appendChild(deleteBtn);
+
+      li.appendChild(main);
+      li.appendChild(actions);
+
+      if (isMissed) missedList.appendChild(li);
+      else list.appendChild(li);
     });
+}
+
+/* ============================================================
+   TASK OPERATIONS
+   ============================================================ */
+function addTask() {
+  const text = document.getElementById("todoInput").value.trim();
+  const date = document.getElementById("todoDate").value;
+  const priority = document.getElementById("todoPriority").value;
+
+  if (!text) return;
+
+  AppState.tasks.push({
+    id: Date.now(),
+    user: AppState.currentUser,
+    text,
+    date,
+    priority,
+    completed: false
+  });
+
+  StorageService.saveTasks(AppState.tasks);
+  renderTasks();
+
+  document.getElementById("todoInput").value = "";
+}
+
+function toggleTask(id) {
+  AppState.tasks = AppState.tasks.map(t =>
+    t.id === id ? { ...t, completed: !t.completed } : t
+  );
+  StorageService.saveTasks(AppState.tasks);
+  renderTasks();
+}
+
+function deleteTask(id) {
+  AppState.tasks = AppState.tasks.filter(t => t.id !== id);
+  StorageService.saveTasks(AppState.tasks);
+  renderTasks();
+}
+
+/* ============================================================
+   LOGIN + PASSWORD
+   ============================================================ */
+function startLogin(user) {
+  AppState.pendingUserForLogin = user;
+
+  const t = i18n[AppState.currentLang];
+  document.getElementById("popupTitle").innerText = t.enterPassword;
+
+  document.getElementById("passwordInput").value = "";
+  document.getElementById("passwordError").innerText = "";
+  document.getElementById("passwordOverlay").classList.add("overlay--visible");
+}
+
+function confirmPassword() {
+  const input = document.getElementById("passwordInput").value;
+  const user = AppState.pendingUserForLogin;
+
+  if (input !== PASSWORDS[user]) {
+    document.getElementById("passwordError").innerText =
+      AppState.currentLang === "ar" ? "كلمة المرور غير صحيحة" : "Incorrect password";
+    return;
   }
 
-  function changeTheme() {
-    const theme = document.getElementById('themeSelect').value;
-    localStorage.setItem('mansourTheme', theme);
-    document.body.className = `${theme} ${document.getElementById('fontSelect').value}`;
+  AppState.currentUser = user;
+  AppState.pendingUserForLogin = null;
+
+  if (document.getElementById("rememberMe").checked) {
+    StorageService.saveUser(user);
   }
 
-  function changeFont() {
-    const font = document.getElementById('fontSelect').value;
-    localStorage.setItem('mansourFont', font);
-    document.body.className = `${document.getElementById('themeSelect').value} ${font}`;
+  document.getElementById("passwordOverlay").classList.remove("overlay--visible");
+
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("todoSection").style.display = "block";
+
+  const t = i18n[AppState.currentLang];
+  document.getElementById("mainTitle").innerText =
+    user === "tata" ? t.titleTata : t.titleSeedo;
+
+  renderTasks();
+}
+
+function logout() {
+  StorageService.clearUser();
+  location.reload();
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function changeTheme() {
+  const theme = document.getElementById("themeSelect").value;
+  const font = document.getElementById("fontSelect").value;
+  StorageService.saveTheme(theme);
+  document.body.className = `${theme} ${font} ${AppState.currentLang === "ar" ? "rtl" : ""}`;
+}
+
+function changeFont() {
+  const theme = document.getElementById("themeSelect").value;
+  const font = document.getElementById("fontSelect").value;
+  StorageService.saveFont(font);
+  document.body.className = `${theme} ${font} ${AppState.currentLang === "ar" ? "rtl" : ""}`;
+}
+
+function updateThankYou() {
+  const text = document.getElementById("thankYouEditor").value;
+  StorageService.saveLetter(text);
+  document.getElementById("thankYouText").innerText = text;
+}
+
+function clearAllTasks() {
+  const t = i18n[AppState.currentLang];
+  if (!confirm(t.deleteConfirm)) return;
+
+  AppState.tasks = AppState.tasks.filter(t => t.user !== AppState.currentUser);
+  StorageService.saveTasks(AppState.tasks);
+  renderTasks();
+}
+
+function resetApp() {
+  const t = i18n[AppState.currentLang];
+  if (!confirm(t.resetConfirm)) return;
+
+  StorageService.clearAll();
+  location.reload();
+}
+
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+function showTab(tab) {
+  ["tasks", "missed", "thanks", "settings"].forEach(name => {
+    document.getElementById(`tab_${name}`).style.display =
+      name === tab ? "block" : "none";
+  });
+
+  document.querySelectorAll(".tab-bar__button").forEach(btn => {
+    btn.classList.toggle(
+      "tab-bar__button--active",
+      btn.getAttribute("data-tab") === tab
+    );
+  });
+}
+
+/* ============================================================
+   EVENT BINDING
+   ============================================================ */
+document.getElementById("loginTataBtn").onclick = () => startLogin("tata");
+document.getElementById("loginSeedoBtn").onclick = () => startLogin("seedo");
+
+document.getElementById("passwordOkBtn").onclick = confirmPassword;
+document.getElementById("passwordCancelBtn").onclick = () =>
+  document.getElementById("passwordOverlay").classList.remove("overlay--visible");
+
+document.getElementById("addTaskBtn").onclick = addTask;
+
+document.getElementById("logoutBtn").onclick = logout;
+
+document.getElementById("themeSelect").onchange = changeTheme;
+document.getElementById("fontSelect").onchange = changeFont;
+document.getElementById("languageSelect").onchange = e => applyLanguage(e.target.value);
+
+document.getElementById("clearTasksBtn").onclick = clearAllTasks;
+document.getElementById("resetAppBtn").onclick = resetApp;
+
+document.getElementById("settingsIcon").onclick = () => showTab("settings");
+
+document.getElementById("tabBtn_tasks").onclick = () => showTab("tasks");
+document.getElementById("tabBtn_missed").onclick = () => showTab("missed");
+document.getElementById("tabBtn_thanks").onclick = () => showTab("thanks");
+
+document.getElementById("langToggleBtn").onclick = () =>
+  applyLanguage(AppState.currentLang === "en" ? "ar" : "en");
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+window.onload = function () {
+  AppState.tasks = StorageService.loadTasks();
+
+  const savedTheme = StorageService.loadTheme() || "theme-pink";
+  const savedFont = StorageService.loadFont() || "font-medium";
+  const savedLang = StorageService.loadLang() || "en";
+
+  document.body.className = `${savedTheme} ${savedFont}`;
+  applyLanguage(savedLang);
+
+  const savedLetter = StorageService.loadLetter();
+  if (savedLetter) {
+    document.getElementById("thankYouText").innerText = savedLetter;
+    document.getElementById("thankYouEditor").value = savedLetter;
   }
 
-  function updateThankYou() {
-    const text = document.getElementById('thankYouEditor').value;
-    document.getElementById('thankYouText').innerText = text;
-    localStorage.setItem('mansourLetter', text);
-  }
+  const savedUser = StorageService.loadUser();
+  if (savedUser && PASSWORDS[savedUser]) {
+    AppState.currentUser = savedUser;
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("todoSection").style.display = "block";
 
-  function clearAllTasks() {
-    if(confirm("Delete all your tasks?")) {
-      tasks = tasks.filter(t => t.user !== currentUser);
-      saveAndRender();
-    }
-  }
+    const t = i18n[AppState.currentLang];
+    document.getElementById("mainTitle").innerText =
+      savedUser === "tata" ? t.titleTata : t.titleSeedo;
 
-  function resetApp() {
-    if(confirm("This will erase everything and start over. Are you sure?")) {
-      localStorage.clear();
-      location.reload();
-    }
+    renderTasks();
   }
+};
 </script>
 </body>
 </html>
