@@ -86,8 +86,8 @@
 
     /* TABS */
     .tab-bar { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; overflow-x: auto;}
-    .tab-bar button { background: none; color: var(--text-soft); flex: none; padding: 10px; }
-    .tab-bar button.active { color: var(--accent); border-bottom: 3px solid var(--accent); border-radius: 0; }
+    .tab-bar button { background: none; color: var(--text-soft); flex: none; padding: 10px; border-radius: 0; }
+    .tab-bar button.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
     .logout-btn { margin-left: auto; color: #ff4d4d; cursor: pointer; padding: 10px; font-weight: bold;}
 
     /* TODO LIST */
@@ -116,8 +116,9 @@
     .priority-low { border-left-color: var(--low); }
     
     .expired { color: var(--high); font-weight: bold; }
-    .btn-small { padding: 5px 10px; font-size: 0.8em; margin-left: 5px; }
+    .btn-small { padding: 5px 10px; font-size: 0.8em; margin-left: 5px; width: auto; flex: none;}
     .btn-delete { background: #ff4d4d; }
+    .btn-check { background: var(--low); }
 
     /* OVERLAY */
     .overlay {
@@ -136,7 +137,7 @@
   <div class="card">
 
     <header>
-      <h1>Grandparents To‑Do</h1>
+      <h1 id="mainTitle">Grandparents To‑Do</h1>
       <div class="pill">Made by Mansour for Grandma & Grandpa 💖</div>
     </header>
 
@@ -231,167 +232,158 @@
   </div>
 </div>
 
-<!-- PASSWORD POPUP -->
-<div id="passwordOverlay" class="overlay">
-  <div class="popup">
-    <h3 id="popupTitle">Enter Password</h3>
-    <input type="password" id="passwordInput" style="width:80%; margin-bottom:10px;">
-    <div class="error-msg" id="passwordError"></div>
-    <button onclick="confirmPassword()">OK</button>
-    <button onclick="closePasswordPopup()" style="background:#666; margin-top:5px;">Cancel</button>
-  </div>
-</div>
-
 <script>
-/* ============================================================
-   LOGIC
-   ============================================================ */
-const GRANDMA_PASSWORD = "maha123";
-const GRANDPA_PASSWORD = "nabil123";
+  let currentUser = "";
+  let tasks = JSON.parse(localStorage.getItem('mansourTasks')) || [];
 
-let currentUser = null;
-let pendingUser = null;
-let todos = [];
-
-function startLogin(user) {
-  pendingUser = user;
-  document.getElementById("passwordOverlay").style.display = "flex";
-  document.getElementById("passwordInput").value = "";
-  document.getElementById("passwordError").textContent = "";
-}
-
-function confirmPassword() {
-  const input = document.getElementById("passwordInput").value;
-  const correct = pendingUser === "grandma" ? GRANDMA_PASSWORD : GRANDPA_PASSWORD;
-
-  if (input === correct) {
-    currentUser = pendingUser;
-    if (document.getElementById("rememberMe").checked) {
-      localStorage.setItem("remember_user", currentUser);
+  // Check if "Remember Me" was used
+  window.onload = function() {
+    const savedUser = localStorage.getItem('mansourUser');
+    if (savedUser) {
+      startLogin(savedUser);
     }
-    document.getElementById("passwordOverlay").style.display = "none";
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("todoSection").style.display = "block";
-    loadTodos();
-  } else {
-    document.getElementById("passwordError").textContent = "Incorrect password.";
-  }
-}
-
-function closePasswordPopup() { document.getElementById("passwordOverlay").style.display = "none"; }
-
-function showTab(tab) {
-  const tabs = ["tasks", "missed", "thanks", "settings"];
-  tabs.forEach(t => {
-    document.getElementById("tab_" + t).style.display = t === tab ? "block" : "none";
-    const btn = document.getElementById("tabBtn_" + t);
-    if (btn) btn.classList.toggle("active", t === tab);
-  });
-}
-
-function loadTodos() {
-  const saved = localStorage.getItem("todos_" + currentUser);
-  todos = saved ? JSON.parse(saved) : [];
-  renderTodos();
-}
-
-function saveTodos() { localStorage.setItem("todos_" + currentUser, JSON.stringify(todos)); }
-
-function addTodo() {
-  const text = document.getElementById("todoInput").value.trim();
-  const date = document.getElementById("todoDate").value;
-  const priority = document.getElementById("todoPriority").value;
-  if (!text || !date) { alert("Please enter a task and a date."); return; }
-  todos.push({ text, date, priority, done: false });
-  saveTodos();
-  renderTodos();
-  document.getElementById("todoInput").value = "";
-}
-
-function renderTodos() {
-  const now = new Date().toISOString().split("T")[0];
-  const activeList = document.getElementById("todoList");
-  const missedList = document.getElementById("missedList");
-  activeList.innerHTML = ""; missedList.innerHTML = "";
-
-  const priorityOrder = { high: 1, medium: 2, low: 3 };
-  todos.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-
-  todos.forEach((task, index) => {
-    const li = document.createElement("li");
-    li.className = `priority-${task.priority}`;
+    // Load saved settings
+    const theme = localStorage.getItem('mansourTheme') || 'theme-pink';
+    const font = localStorage.getItem('mansourFont') || 'font-medium';
+    document.body.className = `${theme} ${font}`;
+    document.getElementById('themeSelect').value = theme;
+    document.getElementById('fontSelect').value = font;
     
-    const content = document.createElement("div");
-    content.innerHTML = `<strong>${task.text}</strong><br><small class="${task.date < now ? 'expired' : ''}">Due: ${task.date}</small>`;
+    const savedLetter = localStorage.getItem('mansourLetter');
+    if(savedLetter) {
+        document.getElementById('thankYouText').innerText = savedLetter;
+        document.getElementById('thankYouEditor').value = savedLetter;
+    }
+  };
+
+  function startLogin(user) {
+    currentUser = user;
+    if (document.getElementById('rememberMe').checked) {
+      localStorage.setItem('mansourUser', user);
+    }
+    document.getElementById('loginSection').style.display = "none";
+    document.getElementById('todoSection').style.display = "block";
+    document.getElementById('mainTitle').innerText = (user === 'grandma' ? "Grandma's List" : "Grandpa's List");
+    renderTasks();
+  }
+
+  function logoutUser() {
+    localStorage.removeItem('mansourUser');
+    location.reload();
+  }
+
+  function showTab(tabName) {
+    const tabs = ['tasks', 'missed', 'thanks', 'settings'];
+    tabs.forEach(t => {
+      document.getElementById('tab_' + t).style.display = (t === tabName ? "block" : "none");
+      document.getElementById('tabBtn_' + (t === 'thanks' || t === 'settings' ? 'tasks' : t))?.classList.remove('active');
+    });
+    // Visual tab highlighting
+    document.querySelectorAll('.tab-bar button').forEach(btn => btn.classList.remove('active'));
+    if(tabName !== 'settings') document.getElementById('tabBtn_'+tabName)?.classList.add('active');
+  }
+
+  function addTodo() {
+    const input = document.getElementById('todoInput');
+    const date = document.getElementById('todoDate');
+    const priority = document.getElementById('todoPriority');
     
-    const actions = document.createElement("div");
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "Delete";
-    delBtn.className = "btn-small btn-delete";
-    delBtn.onclick = () => { todos.splice(index, 1); saveTodos(); renderTodos(); };
-    
-    actions.appendChild(delBtn);
-    li.appendChild(content);
-    li.appendChild(actions);
+    if (input.value.trim() === "") return;
 
-    if (task.date < now) missedList.appendChild(li);
-    else activeList.appendChild(li);
-  });
-}
+    const newTask = {
+      id: Date.now(),
+      user: currentUser,
+      text: input.value,
+      date: date.value,
+      priority: priority.value,
+      completed: false
+    };
 
-function logoutUser() {
-  localStorage.removeItem("remember_user");
-  location.reload();
-}
-
-function changeTheme() {
-  const theme = document.getElementById("themeSelect").value;
-  document.body.className = theme + " " + (localStorage.getItem("app_font") || "font-medium");
-  localStorage.setItem("app_theme", theme);
-}
-
-function changeFont() {
-  const font = document.getElementById("fontSelect").value;
-  document.body.className = (localStorage.getItem("app_theme") || "theme-pink") + " " + font;
-  localStorage.setItem("app_font", font);
-}
-
-function updateThankYou() {
-  const text = document.getElementById("thankYouEditor").value;
-  document.getElementById("thankYouText").textContent = text;
-  localStorage.setItem("thank_you_text", text);
-}
-
-function clearAllTasks() {
-  if(confirm("Clear all your tasks?")) {
-    todos = []; saveTodos(); renderTodos();
-  }
-}
-
-function resetApp() { if(confirm("Reset everything?")) { localStorage.clear(); location.reload(); } }
-
-window.onload = () => {
-  const savedTheme = localStorage.getItem("app_theme") || "theme-pink";
-  const savedFont = localStorage.getItem("app_font") || "font-medium";
-  const savedLetter = localStorage.getItem("thank_you_text");
-  const rememberedUser = localStorage.getItem("remember_user");
-
-  document.body.className = `${savedTheme} ${savedFont}`;
-  document.getElementById("themeSelect").value = savedTheme;
-  document.getElementById("fontSelect").value = savedFont;
-
-  if (savedLetter) {
-    document.getElementById("thankYouText").textContent = savedLetter;
-    document.getElementById("thankYouEditor").value = savedLetter;
+    tasks.push(newTask);
+    saveAndRender();
+    input.value = "";
   }
 
-  if (rememberedUser) {
-    currentUser = rememberedUser;
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("todoSection").style.display = "block";
-    loadTodos();
+  function toggleTask(id) {
+    tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t);
+    saveAndRender();
   }
-};
+
+  function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    saveAndRender();
+  }
+
+  function saveAndRender() {
+    localStorage.setItem('mansourTasks', JSON.stringify(tasks));
+    renderTasks();
+  }
+
+  function renderTasks() {
+    const list = document.getElementById('todoList');
+    const missedList = document.getElementById('missedList');
+    list.innerHTML = "";
+    missedList.innerHTML = "";
+
+    const today = new Date().toISOString().split('T')[0];
+
+    tasks.filter(t => t.user === currentUser).forEach(task => {
+      const isMissed = task.date && task.date < today && !task.completed;
+      
+      const li = document.createElement('li');
+      li.className = `priority-${task.priority}`;
+      if(task.completed) li.style.opacity = "0.5";
+
+      li.innerHTML = `
+        <div>
+          <strong style="${task.completed ? 'text-decoration: line-through' : ''}">${task.text}</strong><br>
+          <small>${task.date || 'No date'}</small>
+        </div>
+        <div>
+          <button class="btn-small btn-check" onclick="toggleTask(${task.id})">${task.completed ? '↩️' : '✔️'}</button>
+          <button class="btn-small btn-delete" onclick="deleteTask(${task.id})">🗑️</button>
+        </div>
+      `;
+
+      if (isMissed) {
+        missedList.appendChild(li);
+      } else {
+        list.appendChild(li);
+      }
+    });
+  }
+
+  function changeTheme() {
+    const theme = document.getElementById('themeSelect').value;
+    localStorage.setItem('mansourTheme', theme);
+    document.body.className = `${theme} ${document.getElementById('fontSelect').value}`;
+  }
+
+  function changeFont() {
+    const font = document.getElementById('fontSelect').value;
+    localStorage.setItem('mansourFont', font);
+    document.body.className = `${document.getElementById('themeSelect').value} ${font}`;
+  }
+
+  function updateThankYou() {
+    const text = document.getElementById('thankYouEditor').value;
+    document.getElementById('thankYouText').innerText = text;
+    localStorage.setItem('mansourLetter', text);
+  }
+
+  function clearAllTasks() {
+    if(confirm("Delete all your tasks?")) {
+      tasks = tasks.filter(t => t.user !== currentUser);
+      saveAndRender();
+    }
+  }
+
+  function resetApp() {
+    if(confirm("This will erase everything and start over. Are you sure?")) {
+      localStorage.clear();
+      location.reload();
+    }
+  }
 </script>
 </body>
 </html>
